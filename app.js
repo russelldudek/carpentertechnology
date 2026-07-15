@@ -1,0 +1,8 @@
+const scenarios = {
+ repeat:{weak:['failure','strategy'],bonds:['b4c','b6c'],title:'Weak bond: failure evidence to strategy',text:'Close the loop from repair record to failure taxonomy, PM decision, and recurrence check before adding more prediction.'},
+ alert:{weak:['condition','work'],bonds:['b23','b2c'],title:'Weak bond: condition signal to executable work',text:'A useful alert needs asset context, consequence, action threshold, owner, and a work path - not another isolated dashboard.'},
+ spare:{weak:['material','asset'],bonds:['b45','b1c'],title:'Weak bond: criticality to materials strategy',text:'Tie service level, lead time, interchangeability, and stockout consequence to the asset hierarchy and maintenance plan.'},
+ pm:{weak:['strategy','work'],bonds:['b56','b2c'],title:'Weak bond: PM strategy to execution evidence',text:'Use closure quality, failure history, maintenance burden, and recurrence to retire low-value tasks and strengthen effective ones.'}
+};
+function setScenario(key){const s=scenarios[key];document.querySelectorAll('.scenario').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.scenario===key)));document.querySelectorAll('.node').forEach(n=>{n.classList.remove('weak','active');if(s.weak.includes(n.dataset.node))n.classList.add('weak');else n.classList.add('active')});document.querySelectorAll('.bond').forEach(b=>{b.classList.remove('weak','active');if(s.bonds.some(c=>b.classList.contains(c)))b.classList.add('weak');else b.classList.add('active')});document.getElementById('scenario-readout').innerHTML=`<strong>${s.title}</strong>${s.text}`}
+document.querySelectorAll('.scenario').forEach(b=>b.addEventListener('click',()=>setScenario(b.dataset.scenario)));setScenario('repeat');
