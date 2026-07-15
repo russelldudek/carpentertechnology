@@ -8,7 +8,7 @@
   };
 
   loadStylesheet('grain.css');
-  loadStylesheet('polish.css?v=20260715-hero-motion-2');
+  loadStylesheet('polish.css?v=20260715-red-boundary-3');
 
   const scenarios = {
     repeat: {
@@ -86,25 +86,25 @@
   phaseRail.innerHTML = `
     <span class="phase-step" data-phase-step="diagnose">01 · Observe boundary</span>
     <span class="phase-step" data-phase-step="decide">02 · Frame decision</span>
-    <span class="phase-step" data-phase-step="verified">03 · Define closure evidence</span>
+    <span class="phase-step" data-phase-step="verified">03 · Confirm evidence</span>
   `;
   field.insertAdjacentElement('afterend', phaseRail);
 
   const phaseSteps = [...phaseRail.querySelectorAll('.phase-step')];
+  const phaseOrder = ['diagnose', 'decide', 'verified'];
 
   const setPhase = (phase, label) => {
     field.dataset.phase = phase;
     status.textContent = label;
-    const order = ['diagnose', 'decide', 'verified'];
-    const activeIndex = phase === 'close' ? 1 : Math.max(0, order.indexOf(phase));
+    const activeIndex = Math.max(0, phaseOrder.indexOf(phase));
     phaseSteps.forEach((step, index) => {
       step.classList.toggle('is-active', index === activeIndex);
       step.classList.toggle('is-complete', index < activeIndex || phase === 'verified');
     });
   };
 
-  const preparePaths = (key) => {
-    field.querySelectorAll('.fracture, .repair').forEach(path => {
+  const prepareBoundary = (key) => {
+    field.querySelectorAll('.fracture').forEach(path => {
       path.classList.remove('is-current');
       const length = Math.ceil(path.getTotalLength());
       path.style.setProperty('--path-length', String(length));
@@ -112,7 +112,6 @@
       path.style.strokeDashoffset = String(length);
     });
     field.querySelector(`[data-fracture="${key}"]`)?.classList.add('is-current');
-    field.querySelector(`[data-repair="${key}"]`)?.classList.add('is-current');
   };
 
   function applyScenario(key, { animate = true } = {}) {
@@ -126,7 +125,6 @@
 
     field.dataset.scenario = scenarioKey;
     field.setAttribute('aria-busy', 'true');
-    field.classList.remove('is-fractured', 'is-repaired');
     readout?.classList.remove('is-revealed');
     readout?.classList.add('is-updating');
 
@@ -138,12 +136,12 @@
       if (node) node.textContent = scenario[name];
     });
 
-    preparePaths(scenarioKey);
+    prepareBoundary(scenarioKey);
+    field.getBoundingClientRect();
 
     const shouldAnimate = animate && !reduceMotion.matches;
     if (!shouldAnimate) {
-      field.classList.add('is-fractured', 'is-repaired');
-      setPhase('verified', 'Closure evidence defined');
+      setPhase('verified', 'Evidence confirmed');
       readout?.classList.remove('is-updating');
       readout?.classList.add('is-revealed');
       field.setAttribute('aria-busy', 'false');
@@ -151,23 +149,17 @@
     }
 
     setPhase('diagnose', 'Boundary observed');
-    requestAnimationFrame(() => field.classList.add('is-fractured'));
 
     schedule(() => {
       setPhase('decide', 'Decision framed');
       readout?.classList.remove('is-updating');
       readout?.classList.add('is-revealed');
-    }, 620);
+    }, 640);
 
     schedule(() => {
-      setPhase('close', 'Closure path established');
-      field.classList.add('is-repaired');
-    }, 1180);
-
-    schedule(() => {
-      setPhase('verified', 'Closure evidence defined');
+      setPhase('verified', 'Evidence confirmed');
       field.setAttribute('aria-busy', 'false');
-    }, 2060);
+    }, 1320);
   }
 
   buttons.forEach(button => {
