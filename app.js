@@ -8,7 +8,7 @@
   };
 
   loadStylesheet('grain.css');
-  loadStylesheet('polish.css?v=20260715-red-boundary-3');
+  loadStylesheet('polish.css?v=20260715-red-outline-4');
 
   const scenarios = {
     repeat: {
@@ -50,6 +50,8 @@
   const field = document.querySelector('.grain-field');
   if (!field) return;
 
+  field.querySelectorAll('.fracture, .repair, .boundary-marker').forEach(node => node.remove());
+
   const buttons = [...document.querySelectorAll('.scenario')];
   const reset = document.querySelector('[data-reset]');
   const readout = document.querySelector('.decision-readout');
@@ -77,14 +79,14 @@
   const status = document.createElement('div');
   status.className = 'grain-status';
   status.setAttribute('aria-live', 'polite');
-  status.textContent = 'Boundary observed';
+  status.textContent = 'Boundary in focus';
   field.appendChild(status);
 
   const phaseRail = document.createElement('div');
   phaseRail.className = 'phase-rail';
   phaseRail.setAttribute('aria-label', 'Scenario explanation sequence');
   phaseRail.innerHTML = `
-    <span class="phase-step" data-phase-step="diagnose">01 · Observe boundary</span>
+    <span class="phase-step" data-phase-step="diagnose">01 · Focus boundary</span>
     <span class="phase-step" data-phase-step="decide">02 · Frame decision</span>
     <span class="phase-step" data-phase-step="verified">03 · Confirm evidence</span>
   `;
@@ -101,17 +103,6 @@
       step.classList.toggle('is-active', index === activeIndex);
       step.classList.toggle('is-complete', index < activeIndex || phase === 'verified');
     });
-  };
-
-  const prepareBoundary = (key) => {
-    field.querySelectorAll('.fracture').forEach(path => {
-      path.classList.remove('is-current');
-      const length = Math.ceil(path.getTotalLength());
-      path.style.setProperty('--path-length', String(length));
-      path.style.strokeDasharray = String(length);
-      path.style.strokeDashoffset = String(length);
-    });
-    field.querySelector(`[data-fracture="${key}"]`)?.classList.add('is-current');
   };
 
   function applyScenario(key, { animate = true } = {}) {
@@ -136,9 +127,6 @@
       if (node) node.textContent = scenario[name];
     });
 
-    prepareBoundary(scenarioKey);
-    field.getBoundingClientRect();
-
     const shouldAnimate = animate && !reduceMotion.matches;
     if (!shouldAnimate) {
       setPhase('verified', 'Evidence confirmed');
@@ -148,18 +136,18 @@
       return;
     }
 
-    setPhase('diagnose', 'Boundary observed');
+    setPhase('diagnose', 'Boundary in focus');
 
     schedule(() => {
       setPhase('decide', 'Decision framed');
       readout?.classList.remove('is-updating');
       readout?.classList.add('is-revealed');
-    }, 640);
+    }, 560);
 
     schedule(() => {
       setPhase('verified', 'Evidence confirmed');
       field.setAttribute('aria-busy', 'false');
-    }, 1320);
+    }, 1160);
   }
 
   buttons.forEach(button => {
