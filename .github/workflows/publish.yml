@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - campaign.bundle
+      - campaign.ready
 
 permissions:
   contents: write
@@ -32,10 +32,16 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import base64, io, zipfile
-          payload = base64.b64decode(Path('campaign.bundle').read_text())
+          parts = sorted(Path('.').glob('campaign.bundle.part*'))
+          if not parts:
+              raise SystemExit('No campaign bundle parts found')
+          encoded = ''.join(part.read_text() for part in parts)
+          payload = base64.b64decode(encoded)
           with zipfile.ZipFile(io.BytesIO(payload)) as archive:
               archive.extractall('.')
-          Path('campaign.bundle').unlink()
+          for part in parts:
+              part.unlink()
+          Path('campaign.ready').unlink()
           PY
 
       - name: Commit complete campaign to main
