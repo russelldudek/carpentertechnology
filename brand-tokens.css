@@ -1,0 +1,18 @@
+:root {
+  --ct-red: #E40046; /* official */
+  --ct-black: #101820; /* official */
+  --ct-cyan: #00BFFF; /* official */
+  --ct-light-cyan: #DDE5FD; /* official */
+  --ct-yellow: #F7BF0A; /* official */
+  --ct-iron: #53565A; /* official */
+  --ct-titanium: #97999B; /* official */
+  --ct-aluminum: #C8C9C7; /* official */
+  --ct-white: #FFFFFF; /* official */
+  --campaign-signal: #7BE1FF; /* candidate-original, subordinate */
+  --campaign-stable: #CFEDE0; /* candidate-original, subordinate */
+  --ink: #101820;
+  --muted: #5D666F;
+  --paper: #FFFFFF;
+  --mist: #F3F6F8;
+  --line: #D8DEE2;
+}
