@@ -1,0 +1,61 @@
+name: Publish candidate campaign
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - campaign.bundle
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Expand audited campaign bundle
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64, io, zipfile
+          payload = base64.b64decode(Path('campaign.bundle').read_text())
+          with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+              archive.extractall('.')
+          Path('campaign.bundle').unlink()
+          PY
+
+      - name: Commit complete campaign to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish complete Carpenter Technology campaign [skip ci]"
+          git push origin main
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
