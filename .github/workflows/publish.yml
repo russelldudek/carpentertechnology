@@ -3,8 +3,7 @@ name: Publish candidate campaign
 on:
   push:
     branches: [main]
-    paths:
-      - campaign.bundle
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,6 +16,7 @@ concurrency:
 
 jobs:
   publish:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
