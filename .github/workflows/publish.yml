@@ -1,8 +1,8 @@
 name: Publish candidate campaign
 
 on:
-  push:
-    branches: [main]
+  schedule:
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -11,12 +11,11 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: carpenter-campaign-publication
   cancel-in-progress: false
 
 jobs:
   publish:
-    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -36,6 +35,8 @@ jobs:
           with zipfile.ZipFile(io.BytesIO(payload)) as archive:
               archive.extractall('.')
           Path('campaign.bundle').unlink()
+          Path('_placeholder.txt').unlink(missing_ok=True)
+          Path('.github/workflows/publish.yml').unlink(missing_ok=True)
           PY
 
       - name: Acquire official Carpenter Technology logo
