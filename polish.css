@@ -1,4 +1,4 @@
-/* Carpenter candidate-vision corrective layer: hero geometry + causal motion */
+/* Carpenter candidate-vision corrective layer: hero geometry + red-boundary motion */
 .hero,
 .hero-copy,
 .hero-art {
@@ -72,17 +72,20 @@
   padding-top: 3px;
 }
 
-/* Remove the previous neon/sweep language. */
+/* One visual language: red boundary, focused domains, resolved evidence. */
 .grain-field,
 .grain-field::after,
 .grain-zone,
 .fracture,
 .repair,
+.boundary-marker,
 .boundary-marker span {
   animation: none !important;
 }
 
-.grain-field::after {
+.grain-field::after,
+.repair,
+.boundary-marker {
   display: none !important;
 }
 
@@ -105,24 +108,23 @@
 
 .grain-zone.is-involved {
   filter: none !important;
-  stroke: #e8eef1;
-  stroke-width: 1.8;
+  stroke: #e40046;
+  stroke-width: 2.1;
   fill-opacity: 1;
 }
 
 .grain-field[data-phase="diagnose"] .grain-zone:not(.is-involved) {
-  opacity: .48;
-}
-
-.grain-field[data-phase="diagnose"] .grain-zone.is-involved {
-  stroke: #e40046;
-  stroke-width: 2.3;
+  opacity: .46;
 }
 
 .grain-field[data-phase="decide"] .grain-zone:not(.is-involved),
-.grain-field[data-phase="close"] .grain-zone:not(.is-involved),
 .grain-field[data-phase="verified"] .grain-zone:not(.is-involved) {
-  opacity: .68;
+  opacity: .67;
+}
+
+.grain-field[data-phase="decide"] .grain-zone.is-involved,
+.grain-field[data-phase="verified"] .grain-zone.is-involved {
+  stroke-width: 2.5;
 }
 
 .grain-lines path {
@@ -130,72 +132,43 @@
 }
 
 .grain-field[data-phase="diagnose"] .grain-lines path {
-  opacity: .4;
-}
-
-.fracture,
-.repair {
-  filter: none !important;
-  vector-effect: non-scaling-stroke;
-  stroke-linecap: square;
-  stroke-linejoin: bevel;
-  transition:
-    stroke-dashoffset 620ms cubic-bezier(.16, .72, .24, 1),
-    opacity 300ms ease,
-    stroke-width 300ms ease;
+  opacity: .36;
 }
 
 .fracture {
+  fill: none;
+  filter: none !important;
+  vector-effect: non-scaling-stroke;
   stroke: #e40046;
   stroke-width: 2.2;
+  stroke-linecap: square;
+  stroke-linejoin: bevel;
   stroke-dasharray: var(--path-length, 520);
   stroke-dashoffset: var(--path-length, 520);
   opacity: 0;
+  transition:
+    stroke-dashoffset 720ms cubic-bezier(.16, .72, .24, 1),
+    opacity 260ms ease,
+    stroke-width 320ms ease;
 }
 
-.repair {
-  stroke: #00bfff;
-  stroke-width: 2.6;
-  stroke-dasharray: var(--path-length, 520);
-  stroke-dashoffset: var(--path-length, 520);
-  opacity: 0;
+.fracture.is-current {
+  opacity: .98;
 }
 
 .grain-field[data-phase="diagnose"] .fracture.is-current,
-.grain-field[data-phase="decide"] .fracture.is-current {
-  stroke-dashoffset: 0;
-  opacity: .96;
-}
-
-.grain-field[data-phase="close"] .fracture.is-current,
+.grain-field[data-phase="decide"] .fracture.is-current,
 .grain-field[data-phase="verified"] .fracture.is-current {
   stroke-dashoffset: 0;
-  opacity: .22;
-  stroke-width: 1.5;
 }
 
-.grain-field[data-phase="close"] .repair.is-current,
-.grain-field[data-phase="verified"] .repair.is-current {
-  stroke-dashoffset: 0;
-  opacity: 1;
-  transition-duration: 820ms, 260ms, 260ms;
+.grain-field[data-phase="decide"] .fracture.is-current {
+  stroke-width: 2.8;
 }
 
-.boundary-marker span {
-  width: 12px;
-  height: 12px;
-  border: 0;
-  border-radius: 1px;
-  background: #101820;
-  box-shadow: 0 0 0 2px #00bfff;
-  opacity: 0;
-  transform: translate(-50%, -50%) rotate(45deg) scale(.55);
-  transition: opacity 280ms ease, transform 420ms cubic-bezier(.16, .75, .2, 1);
-}
-
-.grain-field[data-phase="verified"] .boundary-marker span {
-  opacity: 1;
-  transform: translate(-50%, -50%) rotate(45deg) scale(1);
+.grain-field[data-phase="verified"] .fracture.is-current {
+  stroke-width: 3.2;
+  opacity: .92;
 }
 
 .grain-status {
@@ -220,20 +193,9 @@
 
 .grain-status::before {
   content: "";
-  width: 7px;
-  height: 7px;
+  width: 18px;
+  height: 2px;
   background: #e40046;
-  transform: rotate(45deg);
-  transition: background 260ms ease, transform 260ms ease;
-}
-
-.grain-field[data-phase="close"] .grain-status::before,
-.grain-field[data-phase="verified"] .grain-status::before {
-  background: #00bfff;
-}
-
-.grain-field[data-phase="verified"] .grain-status::before {
-  transform: rotate(135deg);
 }
 
 .phase-rail {
@@ -265,10 +227,10 @@
   position: absolute;
   left: 12px;
   top: 50%;
-  width: 6px;
-  height: 6px;
-  border: 1px solid currentColor;
-  transform: translateY(-50%) rotate(45deg);
+  width: 8px;
+  height: 2px;
+  background: currentColor;
+  transform: translateY(-50%);
 }
 
 .phase-step.is-active,
@@ -277,12 +239,12 @@
 }
 
 .phase-step.is-active {
-  background: rgba(255, 255, 255, .035);
+  background: rgba(228, 0, 70, .08);
 }
 
+.phase-step.is-active::before,
 .phase-step.is-complete::before {
-  border-color: #00bfff;
-  background: #00bfff;
+  background: #e40046;
 }
 
 .scenario-bar {
@@ -303,7 +265,7 @@
 }
 
 .scenario[aria-pressed="true"] {
-  box-shadow: inset 0 -3px 0 #00bfff;
+  box-shadow: inset 0 -3px 0 #e40046;
 }
 
 .decision-readout {
@@ -449,9 +411,6 @@
 @media (prefers-reduced-motion: reduce) {
   .grain-zone,
   .fracture,
-  .repair,
-  .boundary-marker span,
-  .grain-status::before,
   .phase-step,
   .readout-cell {
     transition: none !important;
